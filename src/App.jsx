@@ -1,23 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
 
 const modules = [
-  { id: 'projects', icon: '⌁', name: 'Projects', line: 'Plan the work. See the whole picture.', image: '/assets/screenshots/4.png', title: 'Project timeline', signal: 'Shared delivery view', detail: 'See deadlines, dependencies, and ownership in one shared view.' },
-  { id: 'manufacturing', icon: '◇', name: 'Manufacturing', line: 'From materials to movement, in sync.', image: '/assets/screenshots/7.png', title: 'Manufacturing overview', signal: 'Material flow', detail: 'Keep procurement, bills of materials, work orders, and production context close to the work.' },
-  { id: 'inventory', icon: '▣', name: 'Inventory', line: 'Know what is moving, before it moves.', image: '/assets/screenshots/12.png', title: 'Order management', signal: 'Live stock view', detail: 'Track stock health, warehouses, orders, and movements without the guesswork.' },
-  { id: 'crm', icon: '◎', name: 'CRM', line: 'Turn relationships into repeatable growth.', image: '/assets/screenshots/22.png', title: 'CRM leads', signal: 'One workspace', detail: 'Give every team a shared operational context for customer work and repeatable growth.' },
-  { id: 'finance', icon: '৳', name: 'Finance', line: 'Make every taka accountable.', image: '/assets/screenshots/20.png', title: 'Invoices', signal: 'Connected records', detail: 'Keep every invoice and commercial activity connected to the operational record.' },
-  { id: 'people', icon: '◉', name: 'People & HR', line: 'Build systems people trust.', image: '/assets/screenshots/19.png', title: 'Leave types', signal: 'People workflows', detail: 'Manage employees, attendance, leave, and the workflows that keep your organization moving.' },
-  { id: 'operations', icon: '⌘', name: 'Operations', line: 'Your business, connected end to end.', image: '/assets/screenshots/27.png', title: 'Data manager', signal: 'Custom tables', detail: 'Shape the workspace, records, and views around how your business actually works.' },
+  { id: 'projects', icon: '⌁', name: 'Projects', line: 'Plan the work. See the whole picture.', image: '/assets/screenshots/Projects timelie .png', title: 'Project timeline', signal: 'Shared delivery view', detail: 'See deadlines, dependencies, and ownership in one shared view.' },
+  { id: 'manufacturing', icon: '◇', name: 'Manufacturing', line: 'From materials to movement, in sync.', image: '/assets/screenshots/manufacturing 1 .png', title: 'Manufacturing overview', signal: 'Material flow', detail: 'Keep procurement, bills of materials, work orders, and production context close to the work.' },
+  { id: 'inventory', icon: '▣', name: 'Inventory', line: 'Know what is moving, before it moves.', image: '/assets/screenshots/Inv 1.png', title: 'Inventory management', signal: 'Live stock view', detail: 'Track stock health, warehouses, orders, and movements without the guesswork.' },
+  { id: 'crm', icon: '◎', name: 'CRM', line: 'Turn relationships into repeatable growth.', image: '/assets/screenshots/leads.png', title: 'CRM leads', signal: 'One workspace', detail: 'Give every team a shared operational context for customer work and repeatable growth.' },
+  { id: 'finance', icon: '৳', name: 'Finance', line: 'Make every taka accountable.', image: '/assets/screenshots/Accounting.png', title: 'Accounting & Invoices', signal: 'Connected records', detail: 'Keep every invoice and commercial activity connected to the operational record.' },
+  { id: 'people', icon: '◉', name: 'People & HR', line: 'Build systems people trust.', image: '/assets/screenshots/Hr .png', title: 'HR management', signal: 'People workflows', detail: 'Manage employees, attendance, leave, and the workflows that keep your organization moving.' },
+  { id: 'operations', icon: '⌘', name: 'Operations', line: 'Your business, connected end to end.', image: '/assets/screenshots/Trackers.png', title: 'Operations trackers', signal: 'Custom trackers', detail: 'Shape the workspace, records, and views around how your business actually works.' },
 ];
 
 const gallery = [
-  { image: '/assets/screenshots/4.png', label: 'Project timeline', className: 'wide' },
-  { image: '/assets/screenshots/10.png', label: 'Bills of materials' },
-  { image: '/assets/screenshots/19.png', label: 'Leave types' },
+  { image: '/assets/screenshots/Projects timelie .png', label: 'Project timeline', className: 'wide' },
+  { image: '/assets/screenshots/BOMs.png', label: 'Bills of materials' },
+  { image: '/assets/screenshots/projects kanban .png', label: 'Projects Kanban' },
 ];
 
 const screenRail = [
-  ['/assets/screenshots/7.png', 'Manufacturing'], ['/assets/screenshots/12.png', 'Orders'], ['/assets/screenshots/20.png', 'Invoices'], ['/assets/screenshots/22.png', 'CRM leads'], ['/assets/screenshots/28.png', 'Support'],
+  ['/assets/screenshots/manufacturing 1 .png', 'Manufacturing'],
+  ['/assets/screenshots/Order management .png', 'Orders'],
+  ['/assets/screenshots/sales order .png', 'Sales orders'],
+  ['/assets/screenshots/Accounting.png', 'Accounting'],
+  ['/assets/screenshots/leads.png', 'CRM leads'],
+  ['/assets/screenshots/support tickets .png', 'Support tickets'],
 ];
 
 function Brand() {
@@ -29,29 +34,29 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => { const onScroll = () => setScrolled(window.scrollY > 20); onScroll(); window.addEventListener('scroll', onScroll, { passive: true }); return () => window.removeEventListener('scroll', onScroll); }, []);
   const close = () => setMenuOpen(false);
-  return <header className="site-header" style={{ boxShadow: scrolled ? '0 12px 35px rgba(5,2,12,.25)' : 'none' }}>
-    <div className="shell nav-shell"><Brand/><nav className="desktop-nav" aria-label="Primary navigation"><a href="#platform">Platform</a><a href="#why-mayhem">Why Mayhem</a><a href="#demo">Product tour</a><a href="#contact">Contact</a></nav><div className="nav-actions"><a className="text-link" href="#contact">Contact us <span>↗</span></a><a className="button button-primary button-small" href="#contact">Request a demo <span>↗</span></a></div><button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(value => !value)}><span/><span/></button></div>
+  return <header className={`site-header${scrolled ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
+    <div className="shell nav-shell"><Brand/><nav className="desktop-nav" aria-label="Primary navigation"><a href="#platform">Platform</a><a href="#why-mayhem">Why Mayhem</a><a href="#demo">Product tour</a></nav><div className="nav-actions"><a className="text-link" href="#contact">Contact us <span>↗</span></a><a className="button button-primary button-small" href="#contact">Request a demo <span>↗</span></a></div><button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(value => !value)}><span/><span/></button></div>
     <nav className={`mobile-nav${menuOpen ? ' open' : ''}`} aria-label="Mobile navigation"><a href="#platform" onClick={close}>Platform</a><a href="#why-mayhem" onClick={close}>Why Mayhem</a><a href="#demo" onClick={close}>Product tour</a><a href="#contact" onClick={close}>Contact us</a></nav>
   </header>;
 }
 
 function Hero({ onVideo, onImage }) {
-  return <><section className="hero section-grid" id="top"><div className="hero-orb hero-orb-one"/><div className="hero-orb hero-orb-two"/><div className="shell hero-layout"><div className="hero-copy reveal"><p className="eyebrow-pill"><span>✦</span> Operations, without the gaps</p><h1>The work is<br/><span className="gradient-text">connected now.</span></h1><p className="hero-lede">Mayhem ERP gives ambitious teams one calm control center for projects, production, inventory, people, customers, and the numbers that keep the lights on.</p><div className="button-row"><a className="button button-primary" href="#contact">See Mayhem in action <span>↗</span></a><button className="button button-outline" type="button" onClick={onVideo}><span className="play-icon">▶</span> Watch the product tour</button></div><div className="trust-row"><span className="avatar violet">MD</span><span className="avatar cyan">BK</span><span className="avatar amber">+</span><p>Built for the pace of<br/><strong>growing businesses</strong></p></div></div><div className="hero-product reveal delay-one"><div className="product-glow"/><button className="product-frame" onClick={() => onImage('/assets/screenshots/15.png', 'Mayhem ERP analytics overview')} type="button"><div className="frame-bar"><span>Analytics overview</span><span className="live"><i/> Live workspace</span></div><img src="/assets/screenshots/15.png" alt="Mayhem ERP analytics dashboard"/><span className="expand-chip">⌗ View larger</span></button><div className="pulse-card"><div><span>Workspace pulse</span><i/></div><strong>+28.4<small>%</small></strong><p>operations visibility</p><div className="bars"><i/><i/><i/><i/><i/><i/><i/></div></div></div></div><a className="scroll-cue" href="#platform"><span>Scroll to explore</span><b>↓</b></a></section><section className="discipline-strip"><div className="shell"><span className="mono-label">One operating language</span><div><span>Projects</span><span>Manufacturing</span><span>Inventory</span><span>Finance</span><span>People</span><span>Customers</span></div></div></section></>;
+  return <><section className="hero section-grid" id="top"><div className="hero-orb hero-orb-one"/><div className="hero-orb hero-orb-two"/><div className="shell hero-layout"><div className="hero-copy reveal"><p className="eyebrow-pill"><span>✦</span> Operations, without the gaps</p><h1>The work is<br/><span className="gradient-text">connected now.</span></h1><p className="hero-lede">Mayhem ERP gives ambitious teams one calm control center for projects, production, inventory, people, customers, and the numbers that keep the lights on.</p><div className="button-row"><a className="button button-primary" href="#contact">See Mayhem in action <span>↗</span></a><button className="button button-outline" type="button" onClick={onVideo}><span className="play-icon">▶</span> Watch the product tour</button></div><div className="trust-row"><span className="avatar violet">MD</span><span className="avatar cyan">BK</span><span className="avatar amber">+</span><p>Built for the pace of<br/><strong>growing businesses</strong></p></div></div><div className="hero-product reveal delay-one"><div className="product-glow"/><button className="product-frame" onClick={() => onImage('/assets/screenshots/war room .png', 'Mayhem ERP executive war room')} type="button"><div className="frame-bar"><span>Executive war room</span><span className="live"><i/> Live workspace</span></div><img src="/assets/screenshots/war room .png" alt="Mayhem ERP executive war room dashboard"/><span className="expand-chip">⌗ View larger</span></button><div className="pulse-card"><div><span>Workspace pulse</span><i/></div><strong>+28.4<small>%</small></strong><p>operations visibility</p><div className="bars"><i/><i/><i/><i/><i/><i/><i/></div></div></div></div><a className="scroll-cue" href="#platform"><span>Scroll to explore</span><b>↓</b></a></section><section className="discipline-strip"><div className="shell"><span className="mono-label">One operating language</span><div><span>Projects</span><span>Manufacturing</span><span>Inventory</span><span>Finance</span><span>People</span><span>Customers</span></div></div></section></>;
 }
 
 function Platform({ onImage }) {
   const hrViews = [
-    ['/assets/screenshots/16.png', 'Employees', 'Employee records and status'],
-    ['/assets/screenshots/17.png', 'Attendance', 'Daily attendance and timesheets'],
-    ['/assets/screenshots/18.png', 'Leave requests', 'Requests and approval workflows'],
-    ['/assets/screenshots/19.png', 'Leave types', 'Configurable leave policies'],
+    ['/assets/screenshots/Hr .png', 'HR Overview', 'Employee records, profiles, and departmental status'],
+    ['/assets/screenshots/Org 1.png', 'Organization Tree', 'Company structure, divisions, and departments'],
+    ['/assets/screenshots/org 2.png', 'Team Architecture', 'Reporting lines and unit hierarchy'],
+    ['/assets/screenshots/asset.png', 'Asset Allocation', 'Assigned equipment and device inventory'],
   ];
   return <section className="platform section-pad" id="platform"><div className="shell">
     <div className="platform-intro">
       <div className="platform-overview reveal"><div><p className="section-kicker">01 / The platform</p><h2>A clearer view of the moving parts.</h2></div><div className="platform-summary"><p>Mayhem brings every team into the same room — without asking them to work the same way. Select any discipline to see its real product workspace.</p><div className="line-note"><i/> Seven connected disciplines</div></div></div>
       <div className="module-grid">{modules.map(item => <button key={item.id} className="module-card" onClick={() => onImage(item.image, `${item.name} — ${item.title}`)} type="button" aria-label={`Open ${item.name} screenshot`}><img className="module-thumb" src={item.image} alt="" aria-hidden="true"/><span className="module-icon">{item.icon}</span><b>↗</b><h3>{item.name}</h3><p>{item.line}</p><span className="module-action">View screenshot</span></button>)}</div>
     </div>
-    <div className="hr-showcase reveal"><div className="hr-heading"><div><p className="section-kicker">People &amp; HR</p><h3>Every people workflow, in one place.</h3></div><p>From employee records and attendance to leave requests and configurable leave types. Select any screen to open the full view.</p></div><div className="hr-grid">{hrViews.map(([image,title,copy]) => <button key={title} className="hr-card" onClick={() => onImage(image,title)} type="button"><img src={image} alt={`Mayhem ERP ${title}`}/><span><strong>{title}</strong><small>{copy}</small></span></button>)}</div></div>
+    <div className="hr-showcase reveal"><div className="hr-heading"><div><p className="section-kicker">People &amp; HR</p><h3>Every people workflow, in one place.</h3></div><p>From employee records and company structure to team hierarchy and asset allocations. Select any screen to open the full view.</p></div><div className="hr-grid">{hrViews.map(([image,title,copy]) => <button key={title} className="hr-card" onClick={() => onImage(image,title)} type="button"><img src={image} alt={`Mayhem ERP ${title}`}/><span><strong>{title}</strong><small>{copy}</small></span></button>)}</div></div>
   </div></section>;
 }
 function GalleryButton({ image, label, className = '', onImage }) {
@@ -61,9 +66,9 @@ function GalleryButton({ image, label, className = '', onImage }) {
 function Workspace({ onImage }) {
   return <section className="workspace section-pad" id="demo"><div className="shell">
     <div className="workspace-head reveal"><div><p className="section-kicker">02 / Inside the workspace</p><h2>Real work.<br/><span>No theater.</span></h2></div><p>Every frame below is from the Mayhem ERP product — not a concept, not a mockup. Tap any screen to explore it.</p></div>
-    <div className="video-showcase reveal"><div className="video-copy"><p className="section-kicker">Product demo</p><h3>See Mayhem at work.</h3><p>Watch the supplied product walkthrough to see connected operations, records, and workflows in action.</p></div><div className="video-frame"><video controls playsInline preload="metadata" poster="/assets/screenshots/15.png" src="/assets/Mayhem_ERP_Product_Demo.mp4">Your browser does not support HTML video.</video></div></div>
+    <div className="video-showcase reveal"><div className="video-copy"><p className="section-kicker">Product demo</p><h3>See Mayhem at work.</h3><p>Watch the supplied product walkthrough to see connected operations, records, and workflows in action.</p></div><div className="video-frame"><video controls playsInline preload="metadata" poster="/assets/screenshots/war room .png" src="/assets/Mayhem_ERP_Product_Demo.mp4">Your browser does not support HTML video.</video></div></div>
     <div className="gallery gallery-top"><GalleryButton {...gallery[0]} onImage={onImage}/><div className="gallery-stack"><GalleryButton {...gallery[1]} onImage={onImage}/><GalleryButton {...gallery[2]} onImage={onImage}/></div></div>
-    <div className="gallery gallery-bottom"><GalleryButton image="/assets/screenshots/27.png" label="Data manager" onImage={onImage}/><article className="difference-card"><span>The difference</span><h3>When information moves at the speed of the business, decisions get lighter.</h3><p>✦ Designed for momentum</p></article></div>
+    <div className="gallery gallery-bottom"><GalleryButton image="/assets/screenshots/Asset register .png" label="Asset register" onImage={onImage}/><article className="difference-card"><span>The difference</span><h3>When information moves at the speed of the business, decisions get lighter.</h3><p>✦ Designed for momentum</p></article></div>
     <div className="more-screens reveal"><div><div><p className="section-kicker">More of Mayhem</p><h3>One system. Every angle.</h3></div></div><div className="screenrail">{screenRail.map(([image,label]) => <button key={label} className="screen-thumb" onClick={() => onImage(image,label)} type="button"><img src={image} alt={label}/><span>{label}</span></button>)}</div></div>
   </div></section>;
 }
