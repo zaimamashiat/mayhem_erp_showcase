@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Archive, CheckCircle2, Copy, Eye, FilePenLine, Trash2 } from 'lucide-react';
-import { DataTable } from '../../Mayhem_ERP_BASE/components/tables/data-table';
-import { TooltipProvider } from '../../Mayhem_ERP_BASE/components/ui/tooltip';
+import { DataTable } from './components/DataTable';
 
 const initialRecords = [
   { id: 'REC-001', name: 'Alpha Project', category: 'Project', owner: 'Alex Morgan', status: 'In Progress', priority: 'High', amount: 12500, progress: 72, dueDate: '2026-09-30', updatedAt: '2 hours ago' },
@@ -101,7 +100,6 @@ export default function DataTableShowcase() {
   }, [notify, records]);
 
   return <div className="datatable-showcase dark">
-    <TooltipProvider>
     <DataTable
       data={records}
       columns={columns}
@@ -126,7 +124,6 @@ export default function DataTableShowcase() {
       bulkActions={bulkActions}
       config={{ groupBy: 'user', columnVisibility: 'user', advancedFilter: 'user', export: 'user', columnStats: 'user', density: 'user', widthMode: 'user', fullscreen: 'user', resizable: true, reorderable: true }}
     />
-    </TooltipProvider>
     <div className={`showcase-toast${notice ? ' visible' : ''}`} role="status" aria-live="polite">{notice}</div>
   </div>;
 }

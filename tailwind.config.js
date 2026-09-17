@@ -4,8 +4,6 @@ export default {
   content: [
     './index.html',
     './src/**/*.{js,jsx,ts,tsx}',
-    '../Mayhem_ERP_BASE/components/tables/**/*.{js,jsx,ts,tsx}',
-    '../Mayhem_ERP_BASE/components/ui/{button,dropdown-menu,input,select,tooltip,badge,sheet}.{js,jsx,ts,tsx}',
   ],
   theme: {
     extend: {
