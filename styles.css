@@ -40,8 +40,8 @@
 .module-grid .module-card:last-child{grid-column:span 4}
 .module-card{display:flex;flex-direction:column;min-width:0}
 .module-card .module-action{display:inline-flex;align-items:center;gap:6px;margin:14px 18px 0;color:#c9aaff;font-size:11px;font-weight:700}
-.module-card .module-action:after{content:'↗';transition:transform .25s}
-.module-card:hover .module-action:after{transform:translate(2px,-2px)}
+.module-card .module-action .icon-arrow{width:11px;height:11px}
+.module-card:hover .module-action .icon-arrow{transform:translate(2px,-2px)}
 .module-card p{min-height:43px}
 .module-card .module-action{margin-top:auto;padding-top:14px}
 .module-preview{display:none}
@@ -90,3 +90,79 @@
 .brand strong{font-weight:800;letter-spacing:-.025em}
 .button{letter-spacing:-.012em}
 @media(max-width:1050px){.mobile-nav{gap:2px;font-weight:600;letter-spacing:-.01em}.mobile-nav a{display:flex;align-items:center;justify-content:space-between}.mobile-nav .mobile-cta{margin-top:8px;padding:13px 16px;background:var(--violet);color:#160d20;font-weight:800}.mobile-nav .mobile-cta:hover{background:#c098ff;color:#160d20}}
+/* Reused ERP DataTable compatibility layer */
+.datatable-showcase,
+[data-radix-popper-content-wrapper],
+[data-slot="sheet-content"]{
+  --background:270 29% 8%;--foreground:270 25% 96%;--card:270 24% 11%;--card-foreground:270 25% 96%;
+  --popover:270 24% 11%;--popover-foreground:270 25% 96%;--primary:262 75% 68%;--primary-foreground:270 29% 8%;
+  --secondary:270 18% 17%;--secondary-foreground:270 20% 92%;--muted:270 16% 15%;--muted-foreground:270 10% 65%;
+  --accent:275 25% 20%;--accent-foreground:270 35% 88%;--destructive:0 65% 55%;--destructive-foreground:0 0% 100%;
+  --border:270 14% 24%;--input:270 14% 24%;--ring:262 75% 68%;--brand:262 75% 68%;--brand-subtle:262 35% 20%;
+  --brand-border:262 35% 34%;--radius:.625rem;color-scheme:dark;
+}
+.workspace{padding-block:120px;background:linear-gradient(180deg,#100b16,#0d0912 48%,#100b16)}
+.workspace .workspace-shell{width:min(calc(100% - 28px),1480px)}
+.workspace .workspace-head{width:min(100%,860px);margin-inline:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;text-align:center}
+.workspace .workspace-head h2{margin-top:18px}
+.workspace .workspace-head>p{max-width:680px;margin:0 auto;font-size:15px;line-height:1.8}
+.datatable-stage{margin-top:64px;padding:1px;border-radius:25px;background:linear-gradient(135deg,rgba(169,120,255,.42),rgba(255,255,255,.08) 38%,rgba(107,215,234,.16));box-shadow:0 35px 120px rgba(0,0,0,.42)}
+.datatable-showcase{position:relative;overflow:hidden;border-radius:24px;background:rgba(15,10,21,.97);font-family:var(--sans);font-size:13px;text-align:left}
+.datatable-showcase>div:first-child{border-radius:24px;background:rgba(17,11,24,.94);min-height:680px}
+.showcase-badge{display:inline-flex;align-items:center;width:max-content;border:1px solid transparent;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap}
+.showcase-badge.neutral{color:#c8bdcf;background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+.showcase-badge.muted{color:#94879d;background:rgba(129,116,136,.1);border-color:rgba(129,116,136,.18)}
+.showcase-badge.amber{color:#f6c86f;background:rgba(245,158,11,.11);border-color:rgba(245,158,11,.22)}
+.showcase-badge.blue{color:#9fc4ff;background:rgba(99,102,241,.13);border-color:rgba(99,102,241,.25)}
+.showcase-badge.violet{color:#d0b5ff;background:rgba(169,120,255,.14);border-color:rgba(169,120,255,.28)}
+.showcase-badge.green{color:#8be3a5;background:rgba(52,211,153,.11);border-color:rgba(52,211,153,.22)}
+.showcase-badge.orange{color:#ffab7b;background:rgba(249,115,22,.11);border-color:rgba(249,115,22,.24)}
+.showcase-badge.red{color:#ff929b;background:rgba(244,63,94,.11);border-color:rgba(244,63,94,.24)}
+.showcase-amount{font-variant-numeric:tabular-nums;color:#ded5e6;font-weight:600}
+.showcase-progress{display:inline-flex;align-items:center;gap:8px;min-width:100px}
+.showcase-progress>i{width:58px;height:5px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.08)}
+.showcase-progress>i>b{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8b5cf6,#b78cff)}
+.showcase-progress>em{color:#a99bae;font-size:10px;font-style:normal;font-variant-numeric:tabular-nums}
+.showcase-toast{position:absolute;right:18px;bottom:18px;z-index:70;max-width:260px;padding:10px 14px;border:1px solid rgba(169,120,255,.35);border-radius:10px;background:rgba(24,16,33,.96);box-shadow:0 15px 45px rgba(0,0,0,.45);color:#e6d9f4;font-size:12px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.25s}
+.showcase-toast.visible{opacity:1;transform:none}
+[data-radix-popper-content-wrapper]{font-family:var(--sans);color:hsl(var(--foreground));z-index:100!important}
+[data-slot="sheet-content"]{font-family:var(--sans);color:hsl(var(--foreground))}
+@media(max-width:1050px){.workspace .workspace-shell{width:min(calc(100% - 20px),1480px)}.datatable-showcase>div:first-child{min-height:620px}}
+@media(max-width:760px){.workspace{padding-block:88px}.workspace .workspace-shell{width:min(calc(100% - 12px),1480px)}.workspace .workspace-head{padding-inline:10px}.datatable-stage{margin-top:42px;border-radius:18px}.datatable-showcase,.datatable-showcase>div:first-child{border-radius:17px}.datatable-showcase>div:first-child{min-height:580px}.showcase-toast{position:fixed;right:12px;bottom:12px;left:12px;max-width:none;text-align:center}}
+
+@tailwind components;
+@tailwind utilities;
+/* DataTable visual refinement */
+.workspace .workspace-shell{width:min(calc(100% - 40px),1360px)}
+.workspace .workspace-head{gap:18px}
+.workspace .workspace-head>p{color:#afa1b7}
+.datatable-stage{margin-top:46px;padding:0;border:1px solid rgba(169,120,255,.34);border-radius:22px;background:#0e0914;box-shadow:0 28px 90px rgba(0,0,0,.34)}
+.datatable-showcase{border-radius:21px;background:#0e0914;font-size:13px}
+.datatable-showcase>div:first-child{min-height:0!important;border-color:rgba(187,151,239,.18)!important;border-radius:21px;background:linear-gradient(180deg,rgba(25,16,34,.96),rgba(14,9,20,.98))!important;box-shadow:none!important}
+.datatable-showcase>div:first-child>div:first-child{gap:13px!important;padding:18px 20px!important;border-bottom-color:rgba(255,255,255,.075)!important;background:rgba(24,15,33,.78)!important}
+.datatable-showcase>div:first-child>div:first-child>div:first-child{align-items:center!important}
+.datatable-showcase>div:first-child>div:first-child h2{font-size:15px!important;letter-spacing:-.015em}
+.datatable-showcase>div:first-child>div:first-child p{margin-top:4px!important;color:#8f8199!important;font-size:11px!important}
+.datatable-showcase>div:first-child>div:first-child input{height:36px!important;border-color:rgba(255,255,255,.11)!important;background:rgba(8,5,12,.42)!important;font-size:12px!important}
+.datatable-showcase>div:first-child>div:first-child button{min-height:34px;border-color:rgba(255,255,255,.1)!important;border-radius:8px;background:rgba(255,255,255,.035)!important;color:#bcb0c5!important}
+.datatable-showcase>div:first-child>div:first-child button:hover{border-color:rgba(169,120,255,.34)!important;background:rgba(169,120,255,.09)!important;color:#f7f2ff!important}
+.datatable-showcase table{font-size:12px}
+.datatable-showcase thead{background:rgba(23,15,31,.98)!important}
+.datatable-showcase thead tr{height:43px;border-bottom-color:rgba(255,255,255,.09)!important}
+.datatable-showcase thead th{color:#91839b!important;font-size:10px!important;letter-spacing:.04em;text-transform:uppercase}
+.datatable-showcase tbody tr{height:43px;border-bottom:1px solid rgba(255,255,255,.045)}
+.datatable-showcase tbody tr:last-child{border-bottom:0}
+.datatable-showcase tbody tr:hover{background:rgba(169,120,255,.055)!important}
+.datatable-showcase tbody td{color:#ddd4e4}
+.datatable-showcase aside{border-left:1px solid rgba(255,255,255,.045);background:rgba(20,12,28,.82)!important}
+.datatable-showcase aside>div>div:first-child{background:rgba(169,120,255,.035)}
+.datatable-showcase>div:first-child>div:last-child{min-height:58px;background:rgba(20,13,28,.88)!important}
+.showcase-badge{padding:4px 8px;font-size:9px;letter-spacing:.01em}
+.showcase-progress>i{height:6px;background:rgba(255,255,255,.07)}
+@media(max-width:1050px){.workspace .workspace-shell{width:min(calc(100% - 24px),1360px)}.datatable-showcase>div:first-child{min-height:0!important}}
+@media(max-width:760px){.workspace .workspace-shell{width:min(calc(100% - 16px),1360px)}.workspace .workspace-head{gap:16px}.datatable-stage{margin-top:34px;border-radius:17px}.datatable-showcase,.datatable-showcase>div:first-child{border-radius:16px}.datatable-showcase>div:first-child{min-height:0!important}.datatable-showcase>div:first-child>div:first-child{padding:14px!important}.datatable-showcase>div:first-child>div:first-child>div:first-child{align-items:stretch!important;flex-wrap:wrap}.datatable-showcase>div:first-child>div:first-child>div:first-child>div:first-child{flex-basis:100%}.datatable-showcase>div:first-child>div:first-child>div:first-child>div:nth-child(2){max-width:none;min-width:190px}.datatable-showcase>div:first-child>div:first-child>div:first-child>div:last-child{max-width:100%;overflow-x:auto;padding-bottom:3px}.datatable-showcase tbody tr{height:45px}}
+/* Scoped native-control reset for the reused Tailwind component */
+.datatable-showcase thead button{appearance:none;padding:0;border:0;background:transparent;color:inherit}
+.datatable-showcase>div:first-child>div:last-child button{appearance:none;border:1px solid rgba(255,255,255,.1)!important;background:rgba(255,255,255,.035)!important;color:#a99bae!important;box-shadow:none!important}
+.datatable-showcase>div:first-child>div:last-child button:hover{border-color:rgba(169,120,255,.35)!important;background:rgba(169,120,255,.1)!important;color:#fff!important}
+.datatable-showcase>div:first-child>div:last-child button[class*="bg-[hsl(var(--primary))]"]{border-color:rgba(169,120,255,.58)!important;background:#a978ff!important;color:#160d20!important}
