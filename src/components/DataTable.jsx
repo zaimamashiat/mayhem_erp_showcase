@@ -7,14 +7,13 @@ const csv = (value) => quote + String(value ?? '').replaceAll(quote, quote + quo
 export function DataTable(props) {
   const { data = [], columns = [], title, description, selectable, pagination,
     pageSize: startingSize = 12, pageSizeOptions = [10, 20], splitView,
-    exportable, onCellClick, onCellDoubleClick, onCellSave,
+    exportable, onCellClick, onCellDoubleClick,
     rowActions = [], bulkActions = [] } = props;
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState({ key: '', desc: false });
   const [selected, setSelected] = useState(new Set());
-  const [active, setActive] = useState(null);
+  const [active, setActive] = useState(() => data[0] || null);
   const [menu, setMenu] = useState(null);
-  const [editing, setEditing] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(startingSize);
 
@@ -37,12 +36,17 @@ export function DataTable(props) {
   const rows = pagination ? filtered.slice((page - 1) * pageSize, page * pageSize) : filtered;
   const selectedRows = data.filter((row) => selected.has(row.id));
   const allSelected = rows.length > 0 && rows.every((row) => selected.has(row.id));
+  const primaryActions = rowActions.filter((action) => action.label === 'Edit' || action.label === 'Delete');
+  const secondaryActions = rowActions.filter((action) => action.label !== 'Edit' && action.label !== 'Delete');
 
   useEffect(() => setPage(1), [query, pageSize]);
   useEffect(() => setPage((value) => Math.min(value, pages)), [pages]);
   useEffect(() => {
     setSelected((current) => new Set([...current].filter((id) => data.some((row) => row.id === id))));
-    setActive((current) => current ? data.find((row) => row.id === current.id) || null : null);
+    setActive((current) => {
+      if (!data.length) return null;
+      return current ? data.find((row) => row.id === current.id) || data[0] : data[0];
+    });
   }, [data]);
   function toggle(id) {
     setSelected((current) => {
@@ -88,7 +92,7 @@ export function DataTable(props) {
         {action.icon}{action.label}
       </button>)}
     </div>}
-    <div className={`local-table__body${active && splitView ? ' has-inspector' : ''}`}>
+    <div className={`local-table__body${splitView ? ' has-inspector' : ''}`}>
       <div className='local-table__scroll'><table>
         <thead><tr>
           {selectable && <th className='check'><input type='checkbox' checked={allSelected} onChange={toggleAll} aria-label='Select visible rows' /></th>}
@@ -106,29 +110,24 @@ export function DataTable(props) {
               <input type='checkbox' checked={selected.has(row.id)} onChange={() => toggle(row.id)} aria-label={`Select ${row.id}`} />
             </td>}
             {columns.map((col) => {
-              const cell = `${row.id}:${col.key}`;
               const value = row[col.key];
-              return <td key={col.key} onDoubleClick={() => { setEditing(cell); onCellDoubleClick?.(row, col); }}>
-                {editing === cell
-                  ? <input className='local-table__edit' autoFocus defaultValue={value}
-                    onClick={(event) => event.stopPropagation()}
-                    onBlur={(event) => {
-                      onCellSave?.(data.findIndex((item) => item.id === row.id), col.key, event.target.value);
-                      setEditing(null);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') event.currentTarget.blur();
-                      if (event.key === 'Escape') setEditing(null);
-                    }} />
-                  : col.cell ? col.cell({ value, row }) : String(value ?? '')}
+              return <td key={col.key} onDoubleClick={() => onCellDoubleClick?.(row, col)}>
+                {col.cell ? col.cell({ value, row }) : String(value ?? '')}
               </td>;
             })}
             {rowActions.length > 0 && <td className='actions' onClick={(event) => event.stopPropagation()}>
-              <button type='button' className='local-table__icon'
-                onClick={() => setMenu(menu === row.id ? null : row.id)}
-                aria-label={`Actions for ${row.id}`}><MoreHorizontal size={16} /></button>
-              {menu === row.id && <div className='local-table__menu'>
-                {rowActions.map((action) => <button type='button' key={action.label}
+              <div className='local-table__row-actions'>
+                {primaryActions.map((action) => <button type='button' key={action.label}
+                  className={action.variant === 'destructive' ? 'danger' : ''}
+                  onClick={() => { action.onClick(row); setMenu(null); }}>
+                  {action.icon}{action.label}
+                </button>)}
+                {secondaryActions.length > 0 && <button type='button' className='local-table__icon'
+                  onClick={() => setMenu(menu === row.id ? null : row.id)}
+                  aria-label={`More actions for ${row.id}`}><MoreHorizontal size={16} /></button>}
+              </div>
+              {menu === row.id && secondaryActions.length > 0 && <div className='local-table__menu'>
+                {secondaryActions.map((action) => <button type='button' key={action.label}
                   className={action.variant === 'destructive' ? 'danger' : ''}
                   onClick={() => { action.onClick(row); setMenu(null); }}>
                   {action.icon}{action.label}
@@ -140,13 +139,22 @@ export function DataTable(props) {
             colSpan={columns.length + (selectable ? 1 : 0) + (rowActions.length ? 1 : 0)}>No matching records</td></tr>}
         </tbody>
       </table></div>
-      {active && splitView && <aside className='local-table__inspector'>
-        <div><span>Record details</span><button type='button' onClick={() => setActive(null)} aria-label='Close details'><X size={15} /></button></div>
-        <strong>{active.name}</strong><small>{active.id}</small>
-        <dl>{columns.slice(2).map((col) => <div key={col.key}>
-          <dt>{col.label}</dt>
-          <dd>{col.cell ? col.cell({ value: active[col.key], row: active }) : String(active[col.key] ?? '')}</dd>
-        </div>)}</dl>
+      {splitView && <aside className='local-table__inspector' aria-label='Record viewer'>
+        <div><span>Record details</span></div>
+        {active ? <>
+          <strong>{active.name}</strong><small>{active.id}</small>
+          <nav className='local-table__inspector-actions' aria-label={`Actions for ${active.id}`}>
+            {primaryActions.map((action) => <button type='button' key={action.label}
+              className={action.variant === 'destructive' ? 'danger' : ''}
+              onClick={() => action.onClick(active)}>
+              {action.icon}{action.label}
+            </button>)}
+          </nav>
+          <dl>{columns.slice(2).map((col) => <div key={col.key}>
+            <dt>{col.label}</dt>
+            <dd>{col.cell ? col.cell({ value: active[col.key], row: active }) : String(active[col.key] ?? '')}</dd>
+          </div>)}</dl>
+        </> : <p className='local-table__inspector-empty'>No record available</p>}
       </aside>}
     </div>
     <div className='local-table__footer'>

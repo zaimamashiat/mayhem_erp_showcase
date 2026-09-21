@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Archive, CheckCircle2, Copy, Eye, FilePenLine, Trash2 } from 'lucide-react';
+import { Archive, CheckCircle2, Copy, Eye, FilePenLine, Trash2, X } from 'lucide-react';
 import { DataTable } from './components/DataTable';
 
 const initialRecords = [
@@ -44,7 +44,8 @@ function Badge({ value, tone }) {
 export default function DataTableShowcase() {
   const [records, setRecords] = useState(initialRecords);
   const [notice, setNotice] = useState('');
-  const editTargetId = useRef(null);
+  const [editDraft, setEditDraft] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const noticeTimer = useRef(null);
 
   const notify = useCallback((message) => {
@@ -59,6 +60,24 @@ export default function DataTableShowcase() {
     else setRecords((current) => current.map((row) => ids.has(row.id) ? { ...row, status: action, updatedAt: 'Just now' } : row));
     notify(action === 'delete' ? `${ids.size} records deleted` : `${ids.size} records marked ${action.toLowerCase()}`);
   }, [notify]);
+
+  const openEdit = useCallback((row) => setEditDraft({ ...row }), []);
+
+  const saveEdit = useCallback((event) => {
+    event.preventDefault();
+    setRecords((current) => current.map((row) => row.id === editDraft.id
+      ? { ...editDraft, amount: Number(editDraft.amount) || 0, progress: Number(editDraft.progress) || 0, updatedAt: 'Just now' }
+      : row));
+    setEditDraft(null);
+    notify('Demo record updated - reload to restore the original');
+  }, [editDraft, notify]);
+
+  const confirmDelete = useCallback(() => {
+    const ids = new Set(deleteTarget.map((row) => row.id));
+    setRecords((current) => current.filter((row) => !ids.has(row.id)));
+    setDeleteTarget(null);
+    notify(`${ids.size} demo ${ids.size === 1 ? 'record' : 'records'} deleted - reload to restore`);
+  }, [deleteTarget, notify]);
 
   const columns = useMemo(() => [
     { key: 'id', label: 'ID', enableFiltering: true },
@@ -75,36 +94,24 @@ export default function DataTableShowcase() {
 
   const rowActions = useMemo(() => [
     { label: 'View', icon: <Eye className="h-3.5 w-3.5" />, onClick: (row) => { requestAnimationFrame(() => { const match = [...document.querySelectorAll('.datatable-stage tbody tr')].find((item) => item.textContent.includes(row.id)); match?.click(); }); notify(`${row.id} opened in the inspector`); } },
-    { label: 'Edit', icon: <FilePenLine className="h-3.5 w-3.5" />, onClick: (row) => { editTargetId.current = row.id; notify('Double-click any cell to edit it'); } },
+    { label: 'Edit', icon: <FilePenLine className="h-3.5 w-3.5" />, onClick: openEdit },
     { label: 'Duplicate', icon: <Copy className="h-3.5 w-3.5" />, onClick: (row) => { setRecords((current) => { const nextNumber = Math.max(...current.map((item) => Number(item.id.split('-')[1]) || 0)) + 1; return [...current, { ...row, id: `REC-${String(nextNumber).padStart(3, '0')}`, name: `${row.name} Copy`, status: 'Draft', updatedAt: 'Just now' }]; }); notify('Record duplicated'); } },
     { label: 'Archive', icon: <Archive className="h-3.5 w-3.5" />, onClick: (row) => { setRecords((current) => current.map((item) => item.id === row.id ? { ...item, status: 'Archived', updatedAt: 'Just now' } : item)); notify('Record archived'); } },
-    { label: 'Delete', icon: <Trash2 className="h-3.5 w-3.5" />, variant: 'destructive', onClick: (row) => { setRecords((current) => current.filter((item) => item.id !== row.id)); notify('Record deleted'); } },
-  ], [notify]);
+    { label: 'Delete', icon: <Trash2 className="h-3.5 w-3.5" />, variant: 'destructive', onClick: (row) => setDeleteTarget([row]) },
+  ], [notify, openEdit]);
 
   const bulkActions = useMemo(() => [
     { label: 'Mark Completed', icon: <CheckCircle2 className="h-3.5 w-3.5" />, onClick: (rows) => mutateSelected(rows, 'Completed') },
     { label: 'Archive', icon: <Archive className="h-3.5 w-3.5" />, onClick: (rows) => mutateSelected(rows, 'Archived') },
-    { label: 'Delete', icon: <Trash2 className="h-3.5 w-3.5" />, variant: 'destructive', onClick: (rows) => mutateSelected(rows, 'delete') },
+    { label: 'Delete', icon: <Trash2 className="h-3.5 w-3.5" />, variant: 'destructive', onClick: setDeleteTarget },
   ], [mutateSelected]);
-
-  const handleCellSave = useCallback((rowIndex, key, value) => {
-    const fallbackId = records[rowIndex]?.id;
-    const targetId = editTargetId.current || fallbackId;
-    setRecords((current) => current.map((row) => {
-      if (row.id !== targetId) return row;
-      const nextValue = key === 'amount' || key === 'progress' ? Number(value) || 0 : value;
-      return { ...row, [key]: nextValue, updatedAt: 'Just now' };
-    }));
-    editTargetId.current = null;
-    notify('Record updated');
-  }, [notify, records]);
 
   return <div className="datatable-showcase dark">
     <DataTable
       data={records}
       columns={columns}
       title="Operational records"
-      description="Select a row to inspect or edit its details"
+      description="Select a row to inspect it; demo edits reset on reload"
       showTableHeading
       selectable
       pagination
@@ -117,13 +124,41 @@ export default function DataTableShowcase() {
       resizable
       reorderable
       filterMode="global"
-      onCellClick={(row) => { editTargetId.current = row.id; }}
-      onCellDoubleClick={(row) => { editTargetId.current = row.id; }}
-      onCellSave={handleCellSave}
+      onCellDoubleClick={openEdit}
       rowActions={rowActions}
       bulkActions={bulkActions}
       config={{ groupBy: 'user', columnVisibility: 'user', advancedFilter: 'user', export: 'user', columnStats: 'user', density: 'user', widthMode: 'user', fullscreen: 'user', resizable: true, reorderable: true }}
     />
+    {editDraft && <div className="showcase-modal-backdrop" role="presentation" onMouseDown={() => setEditDraft(null)}>
+      <form className="showcase-modal" role="dialog" aria-modal="true" aria-labelledby="edit-record-title" onSubmit={saveEdit} onMouseDown={(event) => event.stopPropagation()}>
+        <div className="showcase-modal__head">
+          <div><span>Demo edit</span><h3 id="edit-record-title">Edit {editDraft.id}</h3></div>
+          <button type="button" onClick={() => setEditDraft(null)} aria-label="Close edit dialog"><X size={17} /></button>
+        </div>
+        <p>Changes are temporary and return to the original values after a page reload.</p>
+        <div className="showcase-modal__grid">
+          <label className="wide">Name<input autoFocus value={editDraft.name} onChange={(event) => setEditDraft((draft) => ({ ...draft, name: event.target.value }))} /></label>
+          <label>Category<select value={editDraft.category} onChange={(event) => setEditDraft((draft) => ({ ...draft, category: event.target.value }))}>{categories.map((value) => <option key={value}>{value}</option>)}</select></label>
+          <label>Owner<input value={editDraft.owner} onChange={(event) => setEditDraft((draft) => ({ ...draft, owner: event.target.value }))} /></label>
+          <label>Status<select value={editDraft.status} onChange={(event) => setEditDraft((draft) => ({ ...draft, status: event.target.value }))}>{statuses.map((value) => <option key={value}>{value}</option>)}</select></label>
+          <label>Priority<select value={editDraft.priority} onChange={(event) => setEditDraft((draft) => ({ ...draft, priority: event.target.value }))}>{priorities.map((value) => <option key={value}>{value}</option>)}</select></label>
+          <label>Amount<input type="number" min="0" value={editDraft.amount} onChange={(event) => setEditDraft((draft) => ({ ...draft, amount: event.target.value }))} /></label>
+          <label>Progress<input type="number" min="0" max="100" value={editDraft.progress} onChange={(event) => setEditDraft((draft) => ({ ...draft, progress: event.target.value }))} /></label>
+          <label className="wide">Due date<input type="date" value={editDraft.dueDate} onChange={(event) => setEditDraft((draft) => ({ ...draft, dueDate: event.target.value }))} /></label>
+        </div>
+        <div className="showcase-modal__actions"><button type="button" onClick={() => setEditDraft(null)}>Cancel</button><button type="submit" className="primary">Apply demo change</button></div>
+      </form>
+    </div>}
+    {deleteTarget && <div className="showcase-modal-backdrop" role="presentation" onMouseDown={() => setDeleteTarget(null)}>
+      <div className="showcase-modal showcase-modal--confirm" role="alertdialog" aria-modal="true" aria-labelledby="delete-record-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="showcase-modal__head">
+          <div><span>Demo delete</span><h3 id="delete-record-title">{deleteTarget.length === 1 ? `Delete ${deleteTarget[0].name}?` : `Delete ${deleteTarget.length} records?`}</h3></div>
+          <button type="button" onClick={() => setDeleteTarget(null)} aria-label="Close delete dialog"><X size={17} /></button>
+        </div>
+        <p>This removes {deleteTarget.length === 1 ? 'the row' : 'these rows'} only for the current demo session. Reloading the page restores {deleteTarget.length === 1 ? 'it' : 'them'}.</p>
+        <div className="showcase-modal__actions"><button type="button" onClick={() => setDeleteTarget(null)}>Cancel</button><button type="button" className="danger" onClick={confirmDelete}>Delete demo row</button></div>
+      </div>
+    </div>}
     <div className={`showcase-toast${notice ? ' visible' : ''}`} role="status" aria-live="polite">{notice}</div>
   </div>;
 }
